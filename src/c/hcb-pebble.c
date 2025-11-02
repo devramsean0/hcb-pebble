@@ -39,7 +39,9 @@ static void prv_window_unload(Window *window) {
 
 static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *ready_tuple = dict_find(iter, MESSAGE_KEY_APP_READY);
-  Tuple *user_auth_code_tuple = dict_find(iter, MESSAGE_KEY_AUTH_USER_CODE);
+  Tuple *auth_user_code_tuple = dict_find(iter, MESSAGE_KEY_AUTH_USER_CODE);
+  Tuple *auth_access_token_tuple = dict_find(iter, MESSAGE_KEY_AUTH_ACCESS_TOKEN);
+  Tuple *auth_refresh_token_tuple = dict_find(iter, MESSAGE_KEY_AUTH_REFRESH_TOKEN);
   if (ready_tuple) {
     // PebbleKit JS is ready, toggle the Lockitron!
     //prv_lockitron_toggle_state();
@@ -55,12 +57,23 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     }
     return;
   }
-  if (user_auth_code_tuple && user_auth_code_tuple->value->cstring) {
-      static char s_buf[128];
-      snprintf(s_buf, sizeof(s_buf), "%s", user_auth_code_tuple->value->cstring);
-      text_layer_set_text(s_text_layer, s_buf);
+  if (auth_user_code_tuple && auth_user_code_tuple->value->cstring) {
+    static char s_buf[128];
+    snprintf(s_buf, sizeof(s_buf), "%s", auth_user_code_tuple->value->cstring);
+    text_layer_set_text(s_text_layer, s_buf);
   }
-  // ...
+  if (auth_access_token_tuple && auth_access_token_tuple->value->cstring) {
+    static char s_buf[128];
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Access Token: %s", auth_access_token_tuple->value->cstring);
+    snprintf(s_buf, sizeof(s_buf), "%s", auth_access_token_tuple->value->cstring);
+    persist_write_string(ACCESS_TOKEN, auth_access_token_tuple->value->cstring);
+  }
+   if (auth_refresh_token_tuple && auth_refresh_token_tuple->value->cstring) {
+    static char s_buf[128];
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Refresh Token: %s", auth_refresh_token_tuple->value->cstring);
+    snprintf(s_buf, sizeof(s_buf), "%s", auth_refresh_token_tuple->value->cstring);
+    persist_write_string(REFRESH_TOKEN, auth_refresh_token_tuple->value->cstring);
+  }
 }
 
 

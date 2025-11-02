@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "flake.lock": "json",
-        "hcb-pebble.h": "c"
+        "hcb-pebble.h": "c",
+        "array": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

@@ -1,4 +1,5 @@
 import { xhrWrapper } from "./lib/http";
+import { sendToPebble } from "./lib/pebble";
 
 const HCB_CLIENT_ID="wJzKxOlT5rqnJh9dx0Q8HEQUXVRdn32Q2qH0dUBeEtI";
 const HCB_OAUTH_BASE="http://192.168.1.119:3000/api/v4/oauth";
@@ -28,7 +29,7 @@ Pebble.addEventListener("appmessage", (dict) => {
             }
             console.log("User Code: ", user_code);
             // Send the User Code to watch
-            PebbleTS.sendAppMessage({'AUTH_USER_CODE': user_code})
+            sendToPebble({'AUTH_USER_CODE': user_code})
             const checkForConfirmed = setInterval(() => {
               console.log("Checking if approved");
               // We need to poll to see if the user code has been authorized
@@ -37,7 +38,7 @@ Pebble.addEventListener("appmessage", (dict) => {
                   const response: HCBOauthTokenError = JSON.parse(xhr.response)
                   if (response.error === "expired_token") {
                     // If token has expired, kill the loop
-                    PebbleTS.sendAppMessage({'AUTH_TIMEDOUT': true})
+                    sendToPebble({'AUTH_TIMEDOUT': true})
                     clearInterval(checkForConfirmed);
                   }
                 } else {
@@ -45,7 +46,7 @@ Pebble.addEventListener("appmessage", (dict) => {
                   // We should have our access token & refresh token now!
                   access_token = response.access_token,
                   refresh_token = response.refresh_token
-                  PebbleTS.sendAppMessage({
+                  sendToPebble({
                     "AUTH_ACCESS_TOKEN": access_token,
                     "AUTH_REFRESH_TOKEN": refresh_token
                   })
