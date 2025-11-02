@@ -1,5 +1,6 @@
 build/
 node_modules/
+src/ts-build/
 
 .lock-waf_linux2_build
 .direnv

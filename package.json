@@ -22,7 +22,9 @@
       "watchface": false
     },
     "messageKeys": [
-      "dummy"
+      "APP_READY",
+      "REQUEST",
+      "ORG_NAME"
     ],
     "resources": {
       "media": []
