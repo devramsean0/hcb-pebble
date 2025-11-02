@@ -1,7 +1,7 @@
 import { xhrWrapper } from "./lib/http";
 
-const HCB_CLIENT_ID="";
-const HCB_OAUTH_BASE="https://hcb.hackclub.com/api/v4/oauth";
+const HCB_CLIENT_ID="wJzKxOlT5rqnJh9dx0Q8HEQUXVRdn32Q2qH0dUBeEtI";
+const HCB_OAUTH_BASE="http://192.168.1.119:3000/api/v4/oauth";
 
 Pebble.addEventListener("ready", (e) => {
     PebbleTS.sendAppMessage({'APP_READY': true });
@@ -10,6 +10,7 @@ Pebble.addEventListener("ready", (e) => {
 Pebble.addEventListener("appmessage", (dict) => {
     switch (dict.payload["REQUEST"]) {
         case "BEGIN_AUTH":
+          console.log("Beginning Auth Step");
           // This is sent by the client if it doesn't have an access token or a valid refresh token
           let user_code: string = "";
           let device_code: string = "";
@@ -19,14 +20,17 @@ Pebble.addEventListener("appmessage", (dict) => {
           // Get device Code
           xhrWrapper(`${HCB_OAUTH_BASE}/authorize_device`, "POST", "application/x-www-form-urlencoded", `client_id=${HCB_CLIENT_ID}&scope=read`, (xhr) => {
             const response: HCBOauthAuthorizeDevice = JSON.parse(xhr.response);
+            console.log("Recieved Res: ", JSON.stringify(response));
             user_code = response.user_code;
             device_code = response.device_code;
             if (response.interval) {
-              interval = response.interval;
+              interval = response.interval * 1000;
             }
+            console.log("User Code: ", user_code);
             // Send the User Code to watch
-            PebbleTS.sendAppMessage({'USER_AUTH_CODE': user_code})
-            const checkforconfirmed = setInterval(() => {
+            PebbleTS.sendAppMessage({'AUTH_USER_CODE': user_code})
+            const checkForConfirmed = setInterval(() => {
+              console.log("Checking if approved");
               // We need to poll to see if the user code has been authorized
               xhrWrapper(`${HCB_OAUTH_BASE}/token`, "POST", "application/x-www-form-urlencoded", `grant_type=urn:ietf:params:oauth:grant-type:device_code&device_code=${device_code}&client_id=${HCB_CLIENT_ID}`, (xhr) => {
                 if (xhr.status != 200) {
@@ -34,7 +38,7 @@ Pebble.addEventListener("appmessage", (dict) => {
                   if (response.error === "expired_token") {
                     // If token has expired, kill the loop
                     PebbleTS.sendAppMessage({'AUTH_TIMEDOUT': true})
-                    checkforconfirmed.close();
+                    clearInterval(checkForConfirmed);
                   }
                 } else {
                   const response: HCBOauthTokenOK = JSON.parse(xhr.response)
@@ -45,6 +49,8 @@ Pebble.addEventListener("appmessage", (dict) => {
                     "AUTH_ACCESS_TOKEN": access_token,
                     "AUTH_REFRESH_TOKEN": refresh_token
                   })
+                  //console.log("Authenticated with access_token and refresh_token", access_token, refresh_token);
+                  clearInterval(checkForConfirmed);
                 }
               })
             }, interval);

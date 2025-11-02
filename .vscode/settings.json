@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "flake.lock": "json",
+        "hcb-pebble.h": "c"
+    }
+}
