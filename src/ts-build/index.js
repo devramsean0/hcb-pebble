@@ -1,1 +1,0 @@
-!function(){"use strict";var e;Pebble.addEventListener("ready",(e=function(e){return console.log("Hello from TS!")},function(){for(var r=[],t=0;t<arguments.length;t++)r[t]=arguments[t];try{return Promise.resolve(e.apply(this,r))}catch(e){return Promise.reject(e)}}))}();
