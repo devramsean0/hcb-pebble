@@ -6,7 +6,8 @@
     "pebble-app"
   ],
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+  },
   "pebble": {
     "displayName": "hcb-pebble",
     "uuid": "28141271-9c44-43d9-b562-bbab0ebdd9c3",
@@ -24,7 +25,10 @@
     "messageKeys": [
       "APP_READY",
       "REQUEST",
-      "ORG_NAME"
+      "AUTH_USER_CODE",
+      "AUTH_TIMEDOUT",
+      "AUTH_ACCESS_TOKEN",
+      "AUTH_REFRESH_TOKEN"
     ],
     "resources": {
       "media": []
