@@ -3,7 +3,7 @@
 static Window *s_window;
 static TextLayer *s_text_layer;
 
-/* static void prv_select_click_handler(ClickRecognizerRef recognizer, void *context) {
+static void prv_select_click_handler(ClickRecognizerRef recognizer, void *context) {
   text_layer_set_text(s_text_layer, "Select");
 }
 
@@ -19,7 +19,7 @@ static void prv_click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, prv_select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, prv_up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, prv_down_click_handler);
-} */
+}
 
 static void prv_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
@@ -35,17 +35,7 @@ static void prv_window_unload(Window *window) {
   text_layer_destroy(s_text_layer);
 }
 
-static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
-  Tuple *ready_tuple = dict_find(iter, MESSAGE_KEY_APP_READY);
-  if (ready_tuple) {
-    // PebbleKit JS is ready, toggle the Lockitron!
-    return;
-  }
-  // ...
-}
-
 static void prv_init(void) {
-  app_message_register_inbox_recieved(prv_inbox_received_handler);
   s_window = window_create();
   window_set_click_config_provider(s_window, prv_click_config_provider);
   window_set_window_handlers(s_window, (WindowHandlers) {
