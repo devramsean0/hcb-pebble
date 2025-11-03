@@ -1,4 +1,4 @@
 typedef enum {
-    ACCESS_TOKEN = 0,
-    REFRESH_TOKEN = 1,
+    PERSISTENT_ACCESS_TOKEN = 0,
+    PERSISTENT_REFRESH_TOKEN = 1,
 } PersistentStorageKeys;

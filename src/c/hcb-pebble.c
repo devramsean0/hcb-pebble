@@ -43,10 +43,8 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   Tuple *auth_access_token_tuple = dict_find(iter, MESSAGE_KEY_AUTH_ACCESS_TOKEN);
   Tuple *auth_refresh_token_tuple = dict_find(iter, MESSAGE_KEY_AUTH_REFRESH_TOKEN);
   if (ready_tuple) {
-    // PebbleKit JS is ready, toggle the Lockitron!
-    //prv_lockitron_toggle_state();
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Recieved Ready");
-    if (!persist_exists(ACCESS_TOKEN)) {
+    if (!persist_exists(PERSISTENT_ACCESS_TOKEN)) {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "Access Token doesn't exist");
       DictionaryIterator *out;
       app_message_outbox_begin(&out);
@@ -66,13 +64,13 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     static char s_buf[128];
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Access Token: %s", auth_access_token_tuple->value->cstring);
     snprintf(s_buf, sizeof(s_buf), "%s", auth_access_token_tuple->value->cstring);
-    persist_write_string(ACCESS_TOKEN, auth_access_token_tuple->value->cstring);
+    persist_write_string(PERSISTENT_ACCESS_TOKEN, auth_access_token_tuple->value->cstring);
   }
    if (auth_refresh_token_tuple && auth_refresh_token_tuple->value->cstring) {
     static char s_buf[128];
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Refresh Token: %s", auth_refresh_token_tuple->value->cstring);
     snprintf(s_buf, sizeof(s_buf), "%s", auth_refresh_token_tuple->value->cstring);
-    persist_write_string(REFRESH_TOKEN, auth_refresh_token_tuple->value->cstring);
+    persist_write_string(PERSISTENT_REFRESH_TOKEN, auth_refresh_token_tuple->value->cstring);
   }
 }
 
